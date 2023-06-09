@@ -1,3 +1,5 @@
+import io.qameta.allure.junit4.DisplayName;
+import io.restassured.response.Response;
 import org.junit.Before;
 import org.junit.Test;
 import static org.hamcrest.Matchers.equalTo;
@@ -5,67 +7,118 @@ import static org.hamcrest.Matchers.equalTo;
 public class CreatingCourierTest {
 
     NewCourier newCourier;
-    Courier courier;
+    CourierClient courierClient;
 
     @Before
     public void setup() {
         newCourier = NewCourier.getAllCorrectCourierSettings(); //
-        courier = new Courier();
+        courierClient = new CourierClient();
     }
 
-    //курьера можно создать -- все поля заполнены корректно
+    /*
     @Test
+    @DisplayName("Создание курьера с корректными значениями полей")
     public void createCourierWithCorrectSettings() {
-        courier.createNewCourier(CourierSettings.getAllCorrectCourierSettings())
+        courierClient.createNewCourier(CourierSettings.getAllCorrectCourierSettings())
                 .then().statusCode(201)
                 .and()
                 .assertThat().body("ok", equalTo(true));
+    }*/
+
+    @Test
+    @DisplayName("Создание курьера с корректными значениями полей")
+    public void createCourierWithCorrectSettings() {
+        Response correctCourier = courierClient.createNewCourier(CourierSettings.getAllCorrectCourierSettings());
+        correctCourier.then().statusCode(201).and().assertThat().body("ok", equalTo(true));
     }
 
-    //курьера можно создать -- поле firstname опущено
+    /*
     @Test
+    @DisplayName("Создание курьера с корректными значениями полей без указания имени")
     public void createCourierWithCorrectSettingsWithoutFirstName() {
-        courier.createNewCourier(CourierSettings.getCourierSettingsWithoutFirstName())
+        courierClient.createNewCourier(CourierSettings.getCourierSettingsWithoutFirstName())
 
                 .then().statusCode(201)
                 .and()
                 .assertThat().body("ok", equalTo(true));
+    }*/
+
+    @Test
+    @DisplayName("Создание курьера с корректными значениями полей без указания имени")
+    public void createCourierWithCorrectSettingsWithoutFirstName() {
+        Response withoutFirstName = courierClient.createNewCourier(CourierSettings.getCourierSettingsWithoutFirstName());
+        withoutFirstName.then().statusCode(201).and().assertThat().body("ok", equalTo(true));
     }
 
-    //негативная проверка создания курьера без пароля
+    /*
     @Test
+    @DisplayName("Создание курьера без указания пароля")
     public void createCourierWithoutPassword(){
-        courier.getIncorrectCourier(CourierSettings.getCourierSettingsWithoutPassword())
+        courierClient.getIncorrectCourier(CourierSettings.getCourierSettingsWithoutPassword())
                 .then().statusCode(400)
                 .and()
                 .assertThat().body("message", equalTo("Недостаточно данных для создания учетной записи"));
+    }*/
+
+    @Test
+    @DisplayName("Создание курьера без указания пароля")
+    public void createCourierWithoutPassword(){
+        Response withoutPassword = courierClient.getIncorrectCourier(CourierSettings.getCourierSettingsWithoutPassword());
+        withoutPassword.then().statusCode(400).and().assertThat().body("message", equalTo("Недостаточно данных для создания учетной записи"));
     }
 
-    //негативная проверка создания курьера без логина
+    /*
     @Test
-    public void createCourierWithoutLogin(){
-        courier.getIncorrectCourier(CourierSettings.getCourierSettingsWithoutLogin())
+    @DisplayName("Создание курьера без указания логина")
+    public void createCourierWithoutLogin() {
+        courierClient.getIncorrectCourier(CourierSettings.getCourierSettingsWithoutLogin())
                 .then().statusCode(400)
                 .and()
                 .assertThat().body("message", equalTo("Недостаточно данных для создания учетной записи"));
+    }*/
+
+    @Test
+    @DisplayName("Создание курьера без указания логина")
+    public void createCourierWithoutLogin() {
+        Response withoutLogin = courierClient.getIncorrectCourier(CourierSettings.getCourierSettingsWithoutLogin());
+        withoutLogin.then().statusCode(400).and().assertThat().body("message", equalTo("Недостаточно данных для создания учетной записи"));
     }
 
-    //негативная проверка создания курьера без логина и пароля
+    /*
     @Test
+    @DisplayName("Создание курьера без указания логина и пароля")
     public void createCourierWithoutLoginAndPassword(){
-        courier.getIncorrectCourier(CourierSettings.getCourierSettingsWithoutLoginAndPassword())
+        courierClient.getIncorrectCourier(CourierSettings.getCourierSettingsWithoutLoginAndPassword())
                 .then().statusCode(400)
                 .and()
                 .assertThat().body("message", equalTo("Недостаточно данных для создания учетной записи"));
+    }*/
+
+
+    @Test
+    @DisplayName("Создание курьера без указания логина и пароля")
+    public void createCourierWithoutLoginAndPassword() {
+        Response incorrectCourier = courierClient.getIncorrectCourier(CourierSettings.getCourierSettingsWithoutLoginAndPassword());
+        incorrectCourier.then().statusCode(400).and().assertThat().body("message", equalTo("Недостаточно данных для создания учетной записи"));
     }
 
-    //проверка создания дублирующего курьера
+    /*
     @Test
+    @DisplayName("Создание дублирующего курьера")
     public void createDuplicateCourier() {
-        courier.createNewCourier(CourierSettings.getAllCorrectCourierSettings());
-        courier.createNewCourier(CourierSettings.getAllCorrectCourierSettings())
+        courierClient.createNewCourier(CourierSettings.getAllCorrectCourierSettings());
+        courierClient.createNewCourier(CourierSettings.getAllCorrectCourierSettings())
                 .then().statusCode(409)
                 .and()
                 .assertThat().body("message", equalTo("Этот логин уже используется. Попробуйте другой."));
+    } */
+
+    @Test
+    @DisplayName("Создание дублирующего курьера")
+    public void creatingDuplicateCourier() {
+        courierClient.createNewCourier(CourierSettings.getAllCorrectCourierSettings());
+        Response duplicate = courierClient.createNewCourier(CourierSettings.getAllCorrectCourierSettings());
+        duplicate.then().statusCode(409)
+                .and().assertThat().body("message", equalTo("Этот логин уже используется. Попробуйте другой."));
     }
 }

@@ -1,26 +1,27 @@
+import io.qameta.allure.Step;
 import io.restassured.response.Response;
 
 import static io.restassured.RestAssured.given;
 
-public class Orders {
+public class OrdersClient {
 
-    //Создание заказа
+    @Step("Создание нового заказа")
     public Response getCorrectNewOrder(NewOrder newOrder) {
         Response response = given()
                 .header("Content-type", "application/json")
-                .baseUri("http://qa-scooter.praktikum-services.ru/api/v1/")
+                .baseUri(Constants.getBaseUrl())
                 .body(newOrder)
-                .post("orders");
+                .post(Constants.ORDERS_ROOT);
         response.then();
         return  response;
     }
 
-    //Получение списка заказов
+    @Step("Получение списка заказов")
     public Response getAllOrders() {
         Response response = given()
-                .baseUri("http://qa-scooter.praktikum-services.ru/api/v1/")
+                .baseUri(Constants.getBaseUrl())
                 .header("Content-type", "application/json")
-                .get("orders");
+                .get(Constants.ORDERS_ROOT);
         response.then();
         return response;
     }

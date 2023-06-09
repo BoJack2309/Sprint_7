@@ -1,42 +1,43 @@
 
+import io.qameta.allure.Step;
 import io.restassured.response.Response;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.notNullValue;
 
 
-public class Courier {
+public class CourierClient {
 
-    //регистрация нового курьера
+    @Step("Регистрация нового курьера")
     public Response createNewCourier(NewCourier newCourier) {
         Response response = given()
                 .header("Content-type", "application/json")
-                .baseUri("http://qa-scooter.praktikum-services.ru/api/v1/")
+                .baseUri(Constants.getBaseUrl())
                 .and()
                 .body(newCourier)
                 .when()
-                .post("courier");
+                .post(Constants.COURIER);
             response.then();
                     return response;
     }
 
-    //регистрация с некорректными данными
+    @Step("Регистрация с некорректными данными")
     public Response getIncorrectCourier(NewCourier newCourier) {
         return given()
                 .header("Content-type", "application/json")
-                .baseUri("http://qa-scooter.praktikum-services.ru/api/v1/")
+                .baseUri(Constants.getBaseUrl())
                 .and()
                 .body(newCourier)
                 .when()
-                .post("courier");
+                .post(Constants.COURIER);
     }
 
-    //удаление курьера
+    @Step("Удаление курьера")
     public Response deleteCourier(CourierLogin courierLogin) {
         Integer id = given()
                 .header("Content-type", "application/json")
-                .baseUri("http://qa-scooter.praktikum-services.ru/api/v1/")
+                .baseUri(Constants.getBaseUrl())
                 .body(courierLogin)
-                .post("courier/login")
+                .post(Constants.COURIER_LOGIN)
                 .then()
                 .assertThat()
                 .statusCode(200)
@@ -47,18 +48,18 @@ public class Courier {
 
         return given()
                 .header("Content-type", "application/json")
-                .baseUri("http://qa-scooter.praktikum-services.ru/api/v1/")
-                .delete("courier" + id);
+                .baseUri(Constants.getBaseUrl())
+                .delete(Constants.COURIER + id);
     }
 
-    //логин
+    @Step("Логин курьера")
     public Response login(CourierLogin courierLogin) {
         return given()
                 .header("Content-type", "application/json")
-                .baseUri("http://qa-scooter.praktikum-services.ru/api/v1/")
+                .baseUri(Constants.getBaseUrl())
                 .and()
                 .body(courierLogin)
                 .when()
-                .post("courier/login");
+                .post(Constants.COURIER_LOGIN);
     }
 }

@@ -1,3 +1,4 @@
+import io.qameta.allure.junit4.DisplayName;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,10 +9,10 @@ import static org.hamcrest.Matchers.notNullValue;
 @RunWith(Parameterized.class)
 public class OrderTest {
 
-    NewOrder newOrder;
-    Orders orders;
+    private NewOrder newOrder;
+    private OrdersClient ordersClient;
 
-    @Parameterized.Parameters()
+    @Parameterized.Parameters(name = "Цвет. Тестовые данные: {0} {1} {2} {3}")
     public static Object[][] getColor() {
         return new Object[][]{
                 {new String[]{"BLACK"}},
@@ -21,15 +22,19 @@ public class OrderTest {
         };
     }
 
+    @Parameterized.Parameter(0)
+    public String[] color;
+
     @Before
     public void setup() {
         newOrder = OrderSettings.createNewOrder(NewOrder.color);
-        orders = new Orders();
+        ordersClient = new OrdersClient();
     }
 
     @Test
+    @DisplayName("Создание заказа")
     public void createOrder() {
-        orders.getCorrectNewOrder(OrderSettings.createNewOrder(NewOrder.color))
+        ordersClient.getCorrectNewOrder(OrderSettings.createNewOrder(NewOrder.color))
                 .then().statusCode(201)
                 .and()
                 .body("track", notNullValue());
